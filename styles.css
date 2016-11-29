@@ -1,0 +1,9 @@
+ul { 
+    display: block;
+    white-space: nowrap;
+    overflow:scroll;
+     }
+li { 
+     width: 100px;
+     display: inline-block;
+     }
