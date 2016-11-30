@@ -180,6 +180,7 @@ function Scheduler() {
 					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
 				}
 			}
+			return readyQueue;
 		}
 
 		// if there is no waiting queue, return null
