@@ -123,6 +123,7 @@ function Program(name) {
 	};
 
 	program.addBurst = function() {
+		if(!burstable) return false;
 		
 	}
 
