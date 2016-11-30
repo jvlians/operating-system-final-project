@@ -1,4 +1,5 @@
-var exampleCPU = new CPU();
+var i5 = new CPU();
+var sched = new Scheduler();
 exampleCPU.setRam(100);
 
 var exampleQueue = [];
