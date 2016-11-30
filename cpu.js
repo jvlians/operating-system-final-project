@@ -29,6 +29,12 @@ function CPU()  {
 	var jobIndex = 0;
 	var waitingIndex = 0;
 
+	var scheduler;
+
+
+	cpu.setScheduler = function(nextScheduler) {
+		scheduler = nextScheduler;
+	}
 
 	cpu.getUsedRam = function() {return curRam;};
 	cpu.getMaxRam = function() {return maxRam};
@@ -79,10 +85,15 @@ function Program(name) {
 	var program = {};
 
 	var id = progId++;
-	var reqRam;
-	var priority;
-	var cycles;
+	var reqRam = 0;
+	var priority = 0;
+	var initCycles = 0;
+	var requiredCycles = 0;;
+	var burstCycles = 0;
 	var assignedCycles = 0;
+
+	var burstable = false;
+	
 
 	program.getName = function(){return name};
 
@@ -90,14 +101,30 @@ function Program(name) {
 	program.setRam = function(next) {reqRam = next};
 	program.getRam = function() {return reqRam};
 
-	program.getCycles = function() {return cycles;};
-	program.setCycles = function(next) {cycles = next;};
-	program.decCycles = function(dec) {cycles -= dec;};
+	program.getReqCycles = function() {return cycles;};
+	program.setReqCycles = function(next) {cycles = next;};
 
 
 	program.getAssCycles = function() {return assignedCycles;};
 	program.setAssCycles = function(next) {assignedCycles = next;};
-	program.decAssCycles = function() {assignedCycles-=1;};
+
+	program.decCycles = function(dec) {
+
+		program.addBurst();
+		if(burstCycles > 0) {
+
+		}
+
+		if(requiredCycles > 0) requiredCycles--;
+		else assignedCycles = 0;
+
+
+		if(assignedCycles > 0) assignedCycles--;
+	};
+
+	program.addBurst = function() {
+		
+	}
 
 
 	return program
@@ -126,9 +153,12 @@ function Scheduler() {
 
 	scheduler.getNextReadyProgram = function() {
 		if (readyQueue.length == 0) return null;
-		if (reqdyQueueIndex >= readyQueue.length) {
+		if (readyQueueIndex >= readyQueue.length) {
 			scheduler.generateSchedule();
+			return scheduler.getNextReadyProgram();
 		}
+
+		return readyQueue[readyQueueIndex];
 	}
 
 
