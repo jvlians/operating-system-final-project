@@ -104,9 +104,15 @@ function Program(name) {
 }
 
 function Scheduler() {
-	var jobQueue = [];
 	var scheduler = {};
+
+	var waitingQueue = [];
+	var readyQueue = [];
+	var terminatedQueu = [];
 	var type = 0; // 0 = round robin, 1 = FIFO, 2 = earliest deadline first
+	var readyQueueIndex = 0;
+
+
 
 	scheduler.setType = function(t) {
 		type = t;
@@ -114,6 +120,15 @@ function Scheduler() {
 
 	scheduler.queueNewJob = function(job) {
 		jobQueue.push(job);
+	}
+
+
+
+	scheduler.getNextReadyProgram = function() {
+		if (readyQueue.length == 0) return null;
+		if (reqdyQueueIndex >= readyQueue.length) {
+			scheduler.generateSchedule();
+		}
 	}
 
 
