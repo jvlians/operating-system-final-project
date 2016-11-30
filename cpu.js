@@ -108,7 +108,7 @@ function Scheduler() {
 
 	var waitingQueue = [];
 	var readyQueue = [];
-	var terminatedQueu = [];
+	var terminatedQueue = [];
 	var type = 0; // 0 = round robin, 1 = FIFO, 2 = earliest deadline first
 	var readyQueueIndex = 0;
 
@@ -118,8 +118,21 @@ function Scheduler() {
 		type = t;
 	}
 
+	scheduler.generateSchedule = function() {
+		if (type == 1) {
+			// type 1 is FIFO
+
+		} else if (type == 2) {
+			// type 2 is earliest deadline first (fewest cycles remaining)
+
+		} else {
+			// default to round robin
+			
+		}
+	}
+
 	scheduler.queueNewJob = function(job) {
-		jobQueue.push(job);
+		waitingQueue.push(job);
 	}
 
 
