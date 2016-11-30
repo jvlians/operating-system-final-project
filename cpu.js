@@ -43,7 +43,7 @@ function CPU()  {
 
 	cpu.nextCycle = function() {
 
-		if(readyQueue.lenght == 0) return;
+		if(readyQueue.length == 0) return;
 
 		if(readyIndex > readyQueue.length);
 			// this is where I call schedule code
@@ -52,7 +52,9 @@ function CPU()  {
 
 
 		console.log(readyQueue[readyIndex].getAssCycles());
-		if(readyQueue[readyIndex].getAssCycles() > 0) readyQueue[readyIndex].decAssCycles();
+		if(readyQueue[readyIndex].getAssCycles() > 0) {
+			 readyQueue[readyIndex].decAssCycles();
+		}
 		else {
 			readyIndex += 1;
 			cpu.nextCycle();
@@ -99,4 +101,21 @@ function Program(name) {
 
 
 	return program
+}
+
+function Scheduler() {
+	var jobQueue = [];
+	var scheduler = {};
+	var type = 0; // 0 = round robin, 1 = FIFO, 2 = earliest deadline first
+
+	scheduler.setType = function(t) {
+		type = t;
+	}
+
+	scheduler.queueNewJob = function(job) {
+		jobQueue.push(job);
+	}
+
+
+	return scheduler;
 }
