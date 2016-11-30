@@ -24,26 +24,20 @@ function CPU()  {
 	var curRam = 0;
 
 	var readyQueue = [];
-	var jobQueue = [];
-	var waitingQueue = [];
 
 	var readyIndex = 0;
 	var jobIndex = 0;
 	var waitingIndex = 0;
 
 
-	cpu.getRam = function() {return ram;};
+	cpu.getUsedRam = function() {return curRam;};
+	cpu.getMaxRam = function() {return maxRam};
 	cpu.setRam = function(next) {maxRam = next;};
 
 	cpu.getReadyQueue = function() {return readyQueue;};
-	cpu.getJobQueue = function() {return jobQueue;};
-	cpu.getWaitingQueue = function(){return waitingQueue;};
-
 	cpu.getNextReadyProgram = function() {return readyQueue[readyIndex].getName();};
-
 	cpu.setReadyQueue = function(next) {readyQueue = next;};
-	cpu.setJobQueue = function(next) {jobQueue = next;};
-	cpu.setWaitingQueue = function(next) {waitingQueue = next;};
+
 
 
 
@@ -77,12 +71,14 @@ function CPU()  {
 }
 
 
+var progId = 0;
 function Program(name) {
 
 	var program = {};
 
+	var id = progId++;
 	var reqRam;
-
+	var priority;
 	var cycles;
 	var assignedCycles = 0;
 
