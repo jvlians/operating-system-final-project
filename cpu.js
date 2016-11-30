@@ -38,7 +38,10 @@ function CPU()  {
 
 	cpu.getUsedRam = function() {return curRam;};
 	cpu.getMaxRam = function() {return maxRam};
-	cpu.setRam = function(next) {maxRam = next;};
+	cpu.setRam = function(next) {
+		if(scheduler.hasEmptyReadyQueue())
+			maxRam = next;};
+	}
 
 	cpu.getReadyQueue = function() {return readyQueue;};
 	cpu.getNextReadyProgram = function() {return readyQueue[readyIndex].getName();};
@@ -49,22 +52,12 @@ function CPU()  {
 
 	cpu.nextCycle = function() {
 
-		if(readyQueue.length == 0) return;
+		var curProgram = scheduler.getNextReadyProgram();
+		while(curProgram != null && curProgram.getReqCycles == 0)
+			curProgram = scheduler.getNextReadyProgram();
 
-		if(readyIndex > readyQueue.length);
-			// this is where I call schedule code
-			var x = 0;
-			//readyQueue = getSchedule(jobQueue);
-
-
-		console.log(readyQueue[readyIndex].getAssCycles());
-		if(readyQueue[readyIndex].getAssCycles() > 0) {
-			 readyQueue[readyIndex].decAssCycles();
-		}
-		else {
-			readyIndex += 1;
-			cpu.nextCycle();
-		}
+		if(curProgram == null) return;
+		else curProgram.decCycles();
 	}
 
 	cpu.runCycles = function(cycles) {
@@ -101,8 +94,15 @@ function Program(name) {
 	program.setRam = function(next) {reqRam = next};
 	program.getRam = function() {return reqRam};
 
-	program.getReqCycles = function() {return cycles;};
-	program.setReqCycles = function(next) {cycles = next;};
+	program.getReqCycles = function() {return requiredCycles;};
+	program.getInitCycles = function() {return initCycles;};
+	program.setReqCycles = function(next) {
+		initCycles = next;
+		requiredCycles = next;
+	};
+
+	program.getBurstCycles = function() {return burstCycles;};
+	program.setBurstable = function(canBurst) {burstable = canBurst;};
 
 
 	program.getAssCycles = function() {return assignedCycles;};
@@ -111,20 +111,24 @@ function Program(name) {
 	program.decCycles = function(dec) {
 
 		program.addBurst();
-		if(burstCycles > 0) {
 
+		if(requiredCycles > 0) {
+			requiredCycles--;
+			if(burstCycles > 0) burstCycles--;
+		} 
+		else {
+			assignedCycles = 0;
 		}
-
-		if(requiredCycles > 0) requiredCycles--;
-		else assignedCycles = 0;
-
 
 		if(assignedCycles > 0) assignedCycles--;
 	};
 
 	program.addBurst = function() {
-		if(!burstable) return false;
-		
+		if(burstable && Math.floor(Math.random() * (101)) == 1 ) {
+			burstable = false;
+			burstCycles = Math.floor(Math.random() * (26)) + 25;
+			requiredCycles+=burstCycles;
+		}
 	}
 
 
@@ -164,8 +168,12 @@ function Scheduler() {
 	}
 
 
-
+	scheduler.hasEmptyReadyQueue = function() {
+		if(readyQueue.length == 0 || readyQueueIndex >= readyQueue.length) return true;
+		else return false;
+	}
 	scheduler.getNextReadyProgram = function() {
+		readyQueueIndex++;
 		if (readyQueue.length == 0) return null;
 		if (readyQueueIndex >= readyQueue.length) {
 			scheduler.generateSchedule();
