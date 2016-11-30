@@ -142,7 +142,8 @@ function Scheduler() {
 	var waitingQueue = [];
 	var readyQueue = [];
 	var terminatedQueue = [];
-	var type = 0; // 0 = round robin, 1 = FIFO, 2 = earliest deadline first
+	var memorySwapping = false;
+	var type = 0; // 0 = priority-based, 1 = FIFO, 2 = earliest deadline first
 	var readyQueueIndex = 0;
 
 
@@ -151,20 +152,45 @@ function Scheduler() {
 		type = t;
 	}
 
-	scheduler.generateSchedule = function() {
+	scheduler.sortQueue = function(a,b) {
 		if (type == 1) {
-			// type 1 is FIFO
-
+			// compare ids to determine which job was queued earliest
+			return a.id - b.id;
 		} else if (type == 2) {
-			// type 2 is earliest deadline first (fewest cycles remaining)
-
+			// compare cycles remaining to determine which job has fewest
+			return a.getAssCycles() - b.getAssCycles();
 		} else {
-			// default to round robin
-			
+			// **DEFAULT CASE**
+			// compare priorities to determine which priority is higher
+			// NOTE: values reversed because higher priority is more valuable, 
+			// and negative values make a go before b, and vice versa
+			// thus, inverting the order will return which has the LARGER priority as the "earlier"
+			// in the array, instead of the SMALLER priority as outlined in the other code blocks
+			return b.priority - a.priority;
 		}
 	}
 
+	scheduler.generateSchedule = function() {
+		if (waitingQueue.length > 0) {
+			var tempQueue = waitingQueue;
+			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
+			for (int i = 0; i < tempQueue.length; i++) {
+				if (tempQueue[i].getRam() < cpu.getMaxRam() - cpu.getUsedRam()) {	// if we can fit this process in RAM
+					readyQueue.push(tempQueue[i]);									// queue that bad boy up
+					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
+				}
+			}
+		}
+
+		// if there is no waiting queue, return null
+		return null;
+	}
+
 	scheduler.queueNewJob = function(job) {
+		if (job.getRam() > cpu.getMaxRam()) {
+			// TODO: Log "job required ram exceeds max ram available - job cannot queue"
+		}
+		if (job.get)
 		waitingQueue.push(job);
 	}
 
