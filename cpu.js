@@ -190,15 +190,13 @@ function Scheduler() {
 	scheduler.queueNewJob = function(job) {
 		if (job.getRam() > cpu.getMaxRam()) {
 			// TODO: Log "job required ram exceeds max ram available - job cannot queue"
+			return;
 		}
-		if (job.get)
 		waitingQueue.push(job);
 	}
 
-
 	scheduler.hasEmptyReadyQueue = function() {
-		if(readyQueue.length == 0 || readyQueueIndex >= readyQueue.length) return true;
-		else return false;
+		return (readyQueue.length == 0 || readyQueueIndex >= readyQueue.length);
 	}
 	scheduler.getNextReadyProgram = function() {
 		readyQueueIndex++;
