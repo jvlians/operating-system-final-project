@@ -24,13 +24,15 @@ for(var i = 0; i < 9; i++) {
 	i5.nextCycle();
 
 }
+
+/*
 console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
 console.log(sched.getCurReadyProgram().getName());
 i5.runCycles(8);
 console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
-console.log(sched.getCurReadyProgram().getName());
+console.log(sched.getCurReadyProgram().getName()); */
 
 
 
@@ -69,8 +71,8 @@ function CPU()  {
 	cpu.nextCycle = function() {
 
 		var curProgram = scheduler.getNextReadyProgram();
-		while(curProgram != null && curProgram.getReqCycles() == 0)
-			curProgram = scheduler.getNextReadyProgram();
+		//while(curProgram != null && curProgram.getReqCycles() == 0)
+		//curProgram = scheduler.getNextReadyProgram();
 
 		if(curProgram == null) return;
 		else curProgram.decCycles();
@@ -97,7 +99,7 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 	//var reqRam = 0;				// how much space the job requires in RAM
 	//var priority = 0;			// the priority of this job as compared to other jobs
 	//var initCycles = 0;			// how many cycles we expect the program to run for
-	var requiredCycles = 0;		// how many cycles truly remain (INCLUDING I/O BURSTS)
+	var requiredCycles = initCycles;		// how many cycles truly remain (INCLUDING I/O BURSTS)
 	var burstCycles = 0;		// how many cycles an I/O burst takes
 	var assignedCycles = 0;		// how many cycles we're allowed to occupy the RAM for remaining
 
@@ -128,7 +130,7 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 
 	program.decCycles = function(dec) {
 
-		program.addBurst();
+		//program.addBurst();
 
 		if(requiredCycles <= 0) {
 			assignedCycles = 0;
@@ -140,6 +142,8 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 			assignedCycles--;
 			if(burstCycles > 0) burstCycles--;
 		} 
+
+		console.log("Required Cycles " + requiredCycles + " assignedCycles "  + assignedCycles);
 	};
 
 	program.addBurst = function() {
@@ -234,7 +238,7 @@ function Scheduler() {
 			// - job cannot queue"
 			return;
 		}
-		if (job.getReqCycles <= 0) {
+		if (job.getReqCycles() <= 0) {
 			// TODO: Log "job completed in 0 cycles"
 			terminatedQueue.push(job);
 			return;
