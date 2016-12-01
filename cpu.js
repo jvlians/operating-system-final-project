@@ -64,7 +64,7 @@ function CPU()  {
 
 		if(curProgram == null) return;
 		else curProgram.decCycles();
-	}
+	}	
 
 	cpu.runCycles = function(cycles) {
 		for(var i = 0; i < cycles; i++) {
@@ -187,7 +187,7 @@ function Scheduler() {
 		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
 
 		// First, check the readyQueue for completed jobs and remove them as necessary.
-		for (int n = 0; n < readyQueue.length; n++) {
+		for (var n = 0; n < readyQueue.length; n++) {
 			if (readyQueue[n].getReqCycles <= 0) {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
@@ -202,7 +202,7 @@ function Scheduler() {
 		if (waitingQueue.length > 0) {
 			var tempQueue = waitingQueue;
 			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
-			for (int i = 0; i < tempQueue.length; i++) {
+			for (var i = 0; i < tempQueue.length; i++) {
 				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
 					readyQueueMemoryInUse += tempQueue[i].getRam();
 					readyQueue.push(tempQueue[i]);									// queue that bad boy up
