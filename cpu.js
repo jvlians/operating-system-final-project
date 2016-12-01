@@ -1,5 +1,7 @@
 var i5 = new CPU();
 var sched = new Scheduler();
+var progId = 0;
+
 
 sched.setCPU(i5);
 i5.setScheduler(sched);
@@ -17,7 +19,7 @@ sched.queueNewJob(new Program("DoubleSortTestLast",1,1,30,-1));
 sched.queueNewJob(new Program("DoubleSortTestFirst",1,2,30,-1));
 sched.queueNewJob(new Program("DoubleSortTestMid",1,2,31,-1));
 
-i5.runCycles(200);
+//i5.runCycles(200);
 /*
 console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
@@ -179,10 +181,13 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		if(state != 1){
 			if(cyclesUntilBurst == 0) {
 				burstCycles = Math.floor(Math.random() * (26)) + 25;
+				console.log("Added " + burstCycles + " planned IO cycles to program " + name + "with id " + id);
 			}
 			if(burstable && Math.floor(Math.random() * (101)) == 1 ) {
 				burstable = false;
+				cyclesUntilBurst = -1;
 				burstCycles = Math.floor(Math.random() * (26)) + 25;
+				console.log("Added " + burstCycles + " externally initalized IO cycles to program " + name + "with id " + id);
 			}
 		}
 
