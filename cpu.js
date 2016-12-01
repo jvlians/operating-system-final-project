@@ -3,7 +3,7 @@ var sched = new Scheduler();
 
 sched.setCPU(i5);
 i5.setScheduler(sched);
-i5.setRam(100);
+i5.setRam(256);
 
 
 
