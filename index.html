@@ -1,12 +1,33 @@
 <html>
 	<head>
 		<script type="text/javascript" src="cpu.js"></script>
+		<script type="text/javascript" src="visual.js"></script>
 		<link rel="stylesheet" type="text/css" href="styles.css">
 	</head>
 
 	<body>
-		<div id = "waitingQueue"><b>Waiting Queue</b></div>
-			<ul> <li> Program1 </li><li> Program2 </li><li> Program3 </li></ul>
+			<b>Waiting Queue</b>
+			<ul class = "programList" id = "waitingQueue"> 
+				<li class = "programItem"> 
+					<div class = "prog">
+						<div class = "name">
+							<center> Name </center>
+						</div>
+
+						<ul class = "dataList">
+							<li class = "data">ID: 1</li>
+							<li class = "data">Priority: 2</li>
+							<li class = "data">Required Ram: 120kb</li>
+							<li class = "data">Required Cycles: 10</li>
+							<li class = "data">IO Burst Cycles: 2</li>
+							<li class = "data">Assigned Cycles: 3</li>
+							<li class = "data">Needs IO? false </li>
+
+						</ul>
+					</div>
+
+				</li>
+			</ul>
 
 		<div id = "readyQueue"><b>Ready Queue</b></div>
 			<ul> <li> Program1 </li><li> Program2 </li><li> Program3 </li></ul>

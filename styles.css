@@ -1,9 +1,22 @@
-ul { 
-    display: block;
-    white-space: nowrap;
-    overflow:scroll;
-     }
-li { 
-     width: 100px;
-     display: inline-block;
-     }
+
+.programList{
+	display: block;
+	white-space: nowrap;
+	overflow:scroll;
+}
+.programItem {
+
+	width: 170px;
+	border: 1px solid black;
+	margin-left: 20px;
+	display: inline-block;
+}
+
+
+.dataList {
+	list-style-type:none;
+    padding-left:0;
+}
+.data {
+    padding-left: 7px;
+}
