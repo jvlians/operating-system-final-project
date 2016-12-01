@@ -124,7 +124,13 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 
 
 	program.getAssCycles = function() {return assignedCycles;};
-	program.setAssCycles = function(next) {assignedCycles = next;};
+	program.setAssCycles = function(next) {
+		if (next > requiredCycles) {
+			assignedCycles = requiredCycles;
+		} else {
+			assignedCycles = next;
+		}
+	};
 
 	program.getPriority = function() {return priority;}
 
@@ -207,6 +213,7 @@ function Scheduler() {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
+				readyQueue[n].setAssCycles(10); // TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
 				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
