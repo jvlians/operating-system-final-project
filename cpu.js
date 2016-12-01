@@ -1,18 +1,23 @@
 var i5 = new CPU();
 var sched = new Scheduler();
-exampleCPU.setRam(100);
 
-var exampleQueue = [];
+
+i5.setRam(100);
+
+
 for(var i = 1; i < 10; i++) {
-	var exampleProgram = new Program("test" + i);
-	exampleProgram.setAssCycles(i);
-	exampleQueue.push(exampleProgram);
+	sched.queueNewJob(new Program("test" + i,i,i,i,false));
 }
+console.log(sched.getCurReadyProgram());
+i5.runCycles(9);
+console.log(sched.getCurReadyProgram());
+i5.nextCycle();
+console.log(sched.getCurReadyProgram());
+i5.runCycles(8);
+console.log(sched.getCurReadyProgram());
+i5.nextCycle();
+console.log(sched.getCurReadyProgram());
 
-exampleCPU.setReadyQueue(exampleQueue);
-exampleCPU.runCycles(3);
-exampleCPU.nextCycle();
-console.log(exampleCPU.getNextReadyProgram());
 
 
 
@@ -74,19 +79,19 @@ function CPU()  {
 
 
 var progId = 0;
-function Program(name) {
+function Program(name,reqRam,priority,initCycles,burstable) {
 
 	var program = {};
 
 	var id = progId++;			// the unique ID of this job
-	var reqRam = 0;				// how much space the job requires in RAM
-	var priority = 0;			// the priority of this job as compared to other jobs
-	var initCycles = 0;			// how many cycles we expect the program to run for
+	//var reqRam = 0;				// how much space the job requires in RAM
+	//var priority = 0;			// the priority of this job as compared to other jobs
+	//var initCycles = 0;			// how many cycles we expect the program to run for
 	var requiredCycles = 0;		// how many cycles truly remain (INCLUDING I/O BURSTS)
 	var burstCycles = 0;		// how many cycles an I/O burst takes
 	var assignedCycles = 0;		// how many cycles we're allowed to occupy the RAM for remaining
 
-	var burstable = false;		// whether or not this job may have an I/O burst in processing it
+	//var burstable = false;		// whether or not this job may have an I/O burst in processing it
 	
 
 	program.getName = function(){return name};
@@ -149,6 +154,10 @@ function Scheduler() {
 	var readyQueueMemoryInUse = 0;
 
 
+	scheduler.getReadyQueue = function() {return readyQueue;};
+	scheduler.getWaitingQueue = function() {return waitingQueue;};
+	scheduler.getTerminatedQueue = function() {return terminatedQueue;};
+
 
 	scheduler.setType = function(t) {
 		type = t;
@@ -174,7 +183,7 @@ function Scheduler() {
 
 	scheduler.generateSchedule = function() {
 		// This function gets called ONLY when we need to re-evaluate the ready queue
-		readyQueueIndex = -1;
+		readyQueueIndex = 0;
 		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
 
 		// First, check the readyQueue for completed jobs and remove them as necessary.
@@ -183,7 +192,7 @@ function Scheduler() {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
-				terminatedqueue.push(readyQueue[n]);
+				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
 			}
@@ -221,16 +230,17 @@ function Scheduler() {
 		return (readyQueue.length == 0 || readyQueueIndex >= readyQueue.length);
 	}
 
+	scheduler.getCurReadyProgram = function() {
+		return readyQueue[readyQueueIndex];
+	}
 	scheduler.getNextReadyProgram = function() {
 		// If the readyQueue is empty AND the waitingQueue is empty, 
 		// we have no job to provide.
 		if (readyQueue.length == 0 && waitingQueue.length == 0) return null;
 
-		// If the readyQueue is populated, move the index up one slot
-		// this is because it is instantiated to -1 (so we can still hit slot 0
-		// and return a value [i.e. if we needed to return value at slot 0, we couldn't
-		// normally increment post-return easily])
-		readyQueueIndex++;
+
+		if(readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
+
 		if (readyQueueIndex >= readyQueue.length) {
 			// If the index of the next program exceeds the readyQueue's length, 
 			// OR if there are 0 jobs in the readyQueue,
