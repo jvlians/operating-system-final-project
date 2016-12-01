@@ -40,14 +40,14 @@ function CPU()  {
 
 	cpu.setScheduler = function(nextScheduler) {
 		scheduler = nextScheduler;
-	}
+	};
 
 	cpu.getUsedRam = function() {return curRam;};
 	cpu.getMaxRam = function() {return maxRam};
 	cpu.setRam = function(next) {
 		if(scheduler.hasEmptyReadyQueue())
-			maxRam = next;};
-	}
+			maxRam = next;
+	};
 
 	cpu.getReadyQueue = function() {return readyQueue;};
 	cpu.getNextReadyProgram = function() {return readyQueue[readyIndex].getName();};
