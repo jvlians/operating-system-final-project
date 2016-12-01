@@ -29,7 +29,9 @@ console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
 console.log(sched.getCurReadyProgram().getName()); */
 
-
+function progNameId(prog) {
+	return prog.getName() + ":" + prog.getId() + "\t\t";
+}
 
 
 
@@ -157,6 +159,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	program.setRam = function(next) {reqRam = next};
 	program.getRam = function() {return reqRam};
+	program.getId = function(){return id;}
 
 	program.getReqCycles = function() {return requiredCycles;};
 	program.getInitCycles = function() {return initCycles;};
@@ -183,13 +186,13 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	program.updateState = function() {
 		if(burstCycles > 0) {
-			if(state != 1) console.log("State Set to IO Burst for program " + name);
+			if(state != 1) console.log(progNameId(this) + "State Set to IO Burst for program ");
 			state = 1;
 		} else if(requiredCycles == 0 || assignedCycles == 0) {
-			if(state != 0) console.log("State Set to Yield for program " + name);
+			if(state != 0) console.log(progNameId(this) + "State Set to Yield for program ");
 			state = 0;
 		} else {
-			if(state != 2) console.log("State set to Calculating for program " + name);
+			if(state != 2) console.log(progNameId(this) + "State set to Calculating for program ");
 			state = 2;
 		}
 	}
@@ -204,7 +207,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 				assignedCycles--;
 			}
 
-			console.log("Calculated Burst Cycle for program " + name);
+			console.log(progNameId(this) + "Calculated Burst Cycle for program ");
 			// log burst cycle complete
 		}
 
@@ -213,7 +216,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 			assignedCycles--;
 			if(cyclesUntilBurst > 0) cyclesUntilBurst--;
 
-			console.log("Calculated normal Cycle for program " + name );
+			console.log(progNameId(this) + "Calculated normal cycle");
 		} 
 
 		program.updateState();
@@ -224,13 +227,13 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		if(state != 1){
 			if(cyclesUntilBurst == 0) {
 				burstCycles = Math.floor(Math.random() * (26)) + 25;
-				console.log("Added " + burstCycles + " planned IO cycles to program " + name + "with id " + id);
+				console.log(progNameId(this) + "Added " + burstCycles + " planned IO cycles");
 			}
 			if(burstable && Math.floor(Math.random() * (101)) == 1 ) {
 				burstable = false;
 				cyclesUntilBurst = -1;
 				burstCycles = Math.floor(Math.random() * (26)) + 25;
-				console.log("Added " + burstCycles + " externally initalized IO cycles to program " + name + "with id " + id);
+				console.log(progNameId(this) + "Added " + burstCycles + " externally initalized IO cycles");
 			}
 		}
 
@@ -280,6 +283,41 @@ function Scheduler() {
 		if (a.getReqCycles() - b.getReqCycles() !== 0) return a.getReqCycles() - b.getReqCycles();
 		return a.id - b.id;
 	}
+	scheduler.generateSchedule = function() {
+		// This function gets called ONLY when we need to re-evaluate the ready queue
+		readyQueueIndex = 0;
+		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
+
+		// First, check the readyQueue for completed jobs and remove them as necessary.
+		for (var n = 0; n < readyQueue.length; n++) {
+			if (readyQueue[n].getReqCycles() <= 0) {
+				// if the job at index n has no cycles remaining, move it to the
+				// terminatedQueue and dequeue it
+				readyQueueMemoryInUse -= readyQueue[n].getRam();
+				terminatedQueue.push(readyQueue[n]);
+				readyQueue.splice(n,1);
+				n--;
+			} else {
+				readyQueue[n].setAssCycles(10);
+				console.log(progNameId(readyQueue[n]) + "Set assigned cycles to 10");
+			}
+		}
+
+		// Then, if the waitingQueue has programs for us to evaluate...
+		if (waitingQueue.length > 0) {
+			var tempQueue = waitingQueue;
+			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
+			for (var i = 0; i < tempQueue.length; i++) {
+				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
+					readyQueueMemoryInUse += tempQueue[i].getRam();
+					tempQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
+					readyQueue.push(tempQueue[i]);									// queue that bad boy up
+					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
+					i--;
+				}
+			}
+		}
+	}
 
 	scheduler.queueNewJob = function(job) {
 		if (job.getRam() > cpu.getMaxRam() || job.getRam() < 0) {
@@ -292,6 +330,7 @@ function Scheduler() {
 			return;
 		}
 		waitingQueue.push(job);
+		console.log(progNameId(job) + " Added program to waiting queue");
 	}
 
 	scheduler.getNextReadyProgram = function() {
