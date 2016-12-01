@@ -12,10 +12,10 @@ i5.setRam(256);
 	sched.queueNewJob(new Program("test" + i,10,i,i,false));
 }*/
 
-sched.queueNewJob(new Program("DoubleSortTestLast",1,1,30,true));
+sched.queueNewJob(new Program("DoubleSortTestLast",1,1,30,-1));
 
-sched.queueNewJob(new Program("DoubleSortTestFirst",1,2,30,true));
-sched.queueNewJob(new Program("DoubleSortTestMid",1,2,31,true));
+sched.queueNewJob(new Program("DoubleSortTestFirst",1,2,30,-1));
+sched.queueNewJob(new Program("DoubleSortTestMid",1,2,31,-1));
 
 i5.runCycles(200);
 /*
@@ -68,10 +68,7 @@ function CPU()  {
 		//curProgram = scheduler.getNextReadyProgram();
 
 		if(curProgram == null) return;
-		else {
-			console.log(curProgram.getName());
-			curProgram.decCycles();
-		}
+		else curProgram.decCycles();
 	}	
 
 	cpu.runCycles = function(cycles) {
@@ -87,10 +84,15 @@ function CPU()  {
 
 
 var progId = 0;
-function Program(name,reqRam,priority,initCycles,burstable) {
+function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	var program = {};
 
+	// 0 = Yeild , 1 = IO Burst, 2 = Calculating
+	var state = 0;
+
+
+	var burstable = true;
 	var id = progId++;			// the unique ID of this job
 	//var reqRam = 0;				// how much space the job requires in RAM
 	//var priority = 0;			// the priority of this job as compared to other jobs
@@ -102,8 +104,11 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 	//var burstable = false;		// whether or not this job may have an I/O burst in processing it
 	
 
-	program.getName = function(){return name};
-
+	program.getName = function(){return name;}
+	program.getState = function(){
+		program.updateState();
+		return state;
+	}
 
 	program.setRam = function(next) {reqRam = next};
 	program.getRam = function() {return reqRam};
@@ -130,33 +135,62 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 
 	program.getPriority = function() {return priority;}
 
+
+	program.updateState = function() {
+		if(burstCycles > 0) {
+			if(state != 1) console.log("State Set to IO Burst for program " + name);
+			state = 1;
+		} else if(requiredCycles == 0 || assignedCycles == 0) {
+			if(state != 0) console.log("State Set to Yield for program " + name);
+			state = 0;
+		} else {
+			if(state != 2) console.log("State set to Calculating for program " + name);
+			state = 2;
+		}
+	}
+
 	program.decCycles = function(dec) {
 
 		program.addBurst();
 
-		if(requiredCycles <= 0) {
-			assignedCycles = 0;
-			burstCycles = 0;
+		if(state == 1) {
+			burstCycles--;
+			if(assignedCycles > 0) {
+				assignedCycles--;
+			}
+
+			console.log("Calculated Burst Cycle for program " + name);
+			// log burst cycle complete
 		}
 
-		if(assignedCycles > 0) {
+		if(state == 2) {
 			requiredCycles--;
 			assignedCycles--;
-			if(burstCycles > 0) burstCycles--;
+			if(cyclesUntilBurst > 0) cyclesUntilBurst--;
+
+			console.log("Calculated normal Cycle for program " + name );
 		} 
+
+		program.updateState();
 
 	};
 
 	program.addBurst = function() {
-		if(burstable && Math.floor(Math.random() * (101)) == 1 ) {
-			burstable = false;
-			burstCycles = Math.floor(Math.random() * (26)) + 25;
-			requiredCycles+=burstCycles;
+		if(state != 1){
+			if(cyclesUntilBurst == 0) {
+				burstCycles = Math.floor(Math.random() * (26)) + 25;
+			}
+			if(burstable && Math.floor(Math.random() * (101)) == 1 ) {
+				burstable = false;
+				burstCycles = Math.floor(Math.random() * (26)) + 25;
+			}
 		}
+
+		program.updateState();
 	}
 
 
-	return program
+	return program;
 }
 
 function Scheduler() {
@@ -254,10 +288,11 @@ function Scheduler() {
 			scheduler.generateSchedule();
 		}
 
-		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
+		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getState() == 0) {
+			readyQueueIndex++;
+		}
 
 		if (readyQueueIndex >= readyQueue.length) {
-			console.log("yes");
 			// If the index of the next program exceeds the readyQueue's length, 
 			// OR if there are 0 jobs in the readyQueue,
 			// we need to regenerate the readyQueue and retry
