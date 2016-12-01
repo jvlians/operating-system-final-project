@@ -213,7 +213,6 @@ function Scheduler() {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
-				readyQueue[n].setAssCycles(10); // TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
 				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
@@ -227,6 +226,7 @@ function Scheduler() {
 			for (var i = 0; i < tempQueue.length; i++) {
 				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
 					readyQueueMemoryInUse += tempQueue[i].getRam();
+					tempQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
 					readyQueue.push(tempQueue[i]);									// queue that bad boy up
 					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
 					i--;
@@ -259,6 +259,7 @@ function Scheduler() {
 		}
 
 		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
+		console.log(readyQueueIndex);
 
 		if (readyQueueIndex >= readyQueue.length) {
 			// If the index of the next program exceeds the readyQueue's length, 
