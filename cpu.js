@@ -145,14 +145,14 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	program.getDataAsDictionary = function() {
 		var dict = {
-			"id"		= id,
-			"name"		= name,
-			"priority"	= priority,
-			"reqRam"	= reqRam,
-			"reqCycles"	= requiredCycles,
-			// "ioBurstcycles" =	ioBurstCycles,
-			"assCycles"	= assignedCycles,
-			"burstable"	= burstable
+			"id"		: id,
+			"name"		: name,
+			"priority"	: priority,
+			"reqRam"	: reqRam,
+			"reqCycles"	: requiredCycles,
+			// "ioBurstcycles" :	ioBurstCycles,
+			"assCycles"	: assignedCycles,
+			"burstable"	: burstable
 		};
 		return dict;
 	}
@@ -247,6 +247,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 function Scheduler() {
 	var scheduler = {};
 	var cpu = {};
+	var v = {};
 	var waitingQueue = [];
 	var readyQueue = [];
 	var terminatedQueue = [];
@@ -405,6 +406,8 @@ function Scheduler() {
 				}
 			}
 		}
+
+		// updateVisuals();			// ATTEMPT TO UPDATE VISUALS
 	}
 
 
