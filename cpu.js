@@ -113,15 +113,16 @@ function Program(name) {
 
 		program.addBurst();
 
-		if(requiredCycles > 0) {
-			requiredCycles--;
-			if(burstCycles > 0) burstCycles--;
-		} 
-		else {
+		if(requiredCycles <= 0) {
 			assignedCycles = 0;
+			burstCycles = 0;
 		}
 
-		if(assignedCycles > 0) assignedCycles--;
+		if(assignedCycles > 0) {
+			requiredCycles--;
+			assignedCycles--;
+			if(burstCycles > 0) burstCycles--;
+		} 
 	};
 
 	program.addBurst = function() {
