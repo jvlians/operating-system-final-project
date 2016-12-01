@@ -9,17 +9,26 @@ i5.setRam(100);
 
 
 for(var i = 1; i < 10; i++) {
-	sched.queueNewJob(new Program("test" + i,i,i,i,false));
+	sched.queueNewJob(new Program("test" + i,10,i,i,false));
 }
-console.log(sched.getCurReadyProgram());
+
+sched.generateSchedule();
+var rq = sched.getReadyQueue();
+for(var i = 0; i < rq.length;i++) {
+	//console.log(rq[i].getName());
+}
+
+
+console.log(sched.getCurReadyProgram().getName());
 i5.runCycles(9);
-console.log(sched.getCurReadyProgram());
+console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
-console.log(sched.getCurReadyProgram());
+console.log(sched.getCurReadyProgram().getName());
 i5.runCycles(8);
-console.log(sched.getCurReadyProgram());
+console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
-console.log(sched.getCurReadyProgram());
+console.log(sched.getCurReadyProgram().getName());
+
 
 
 
@@ -112,6 +121,8 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 	program.getAssCycles = function() {return assignedCycles;};
 	program.setAssCycles = function(next) {assignedCycles = next;};
 
+	program.getPriority = function() {return priority;}
+
 	program.decCycles = function(dec) {
 
 		program.addBurst();
@@ -174,7 +185,7 @@ function Scheduler() {
 			// and negative values make a go before b, and vice versa
 			// thus, inverting the order will return which has the LARGER priority as the "earlier"
 			// in the array, instead of the SMALLER priority as outlined in the other code blocks
-			return b.priority - a.priority;
+			return b.getPriority() - a.getPriority();
 		}
 	}
 
@@ -204,6 +215,7 @@ function Scheduler() {
 					readyQueueMemoryInUse += tempQueue[i].getRam();
 					readyQueue.push(tempQueue[i]);									// queue that bad boy up
 					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
+					i--;
 				}
 			}
 		}
