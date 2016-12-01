@@ -1,8 +1,10 @@
 var i5 = new CPU();
 var sched = new Scheduler();
 
+sched.setCPU(i5);
 i5.setScheduler(sched);
 i5.setRam(100);
+
 
 
 
