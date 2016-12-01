@@ -146,6 +146,7 @@ function Scheduler() {
 	var memorySwapping = false;
 	var type = 0; // 0 = priority-based, 1 = FIFO, 2 = earliest deadline first
 	var readyQueueIndex = 0;
+	var readyQueueMemoryInUse = 0;
 
 
 
@@ -181,8 +182,10 @@ function Scheduler() {
 			if (readyQueue[n].getReqCycles <= 0) {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
+				readyQueueMemoryInUse -= readyQueue[n].getRam();
 				terminatedqueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
+				n--;
 			}
 		}
 
@@ -190,16 +193,13 @@ function Scheduler() {
 			var tempQueue = waitingQueue;
 			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
 			for (int i = 0; i < tempQueue.length; i++) {
-				if (tempQueue[i].getRam() < cpu.getMaxRam() - cpu.getUsedRam()) {	// if we can fit this process in RAM
+				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
+					readyQueueMemoryInUse += tempQueue[i].getRam();
 					readyQueue.push(tempQueue[i]);									// queue that bad boy up
 					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
 				}
 			}
-			return readyQueue;
 		}
-
-		// if there is no waiting queue, return null
-		return null;
 	}
 
 	scheduler.queueNewJob = function(job) {
