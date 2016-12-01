@@ -227,7 +227,7 @@ function Scheduler() {
 		// If the readyQueue is empty AND the waitingQueue is empty, 
 		// we have no job to provide.
 		if (readyQueue.length == 0 && waitingQueue.length == 0) return null;
-
+		if (readyQueue.length == 0) scheduler.getNextReadyProgram();
 
 		if (readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
 
