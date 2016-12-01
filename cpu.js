@@ -1,9 +1,9 @@
 var i5 = new CPU();
 var sched = new Scheduler();
 
-
-i5.setRam(100);
 i5.setScheduler(sched);
+i5.setRam(100);
+
 
 
 for(var i = 1; i < 10; i++) {
@@ -35,11 +35,6 @@ function CPU()  {
 	var readyIndex = 0;
 	var jobIndex = 0;
 	var waitingIndex = 0;
-
-	var scheduler = new Scheduler();
-	scheduler.setCPU(this);
-
-
 
 	cpu.setScheduler = function(nextScheduler) { scheduler = nextScheduler; }
 
