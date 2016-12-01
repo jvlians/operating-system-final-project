@@ -189,6 +189,7 @@ function Scheduler() {
 			}
 		}
 
+		// Then, if the waitingQueue has programs for us to evaluate...
 		if (waitingQueue.length > 0) {
 			var tempQueue = waitingQueue;
 			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
