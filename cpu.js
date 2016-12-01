@@ -175,18 +175,14 @@ function Scheduler() {
 		if (type == 1) {
 			// compare ids to determine which job was queued earliest
 			return a.id - b.id;
-		} else if (type == 2) {
+		}
+		if (type == 2 && a.getAssCycles() - b.getAssCycles() !== 0) {
 			// compare cycles remaining to determine which job has fewest
 			return a.getAssCycles() - b.getAssCycles();
-		} else {
-			// **DEFAULT CASE**
-			// compare priorities to determine which priority is higher
-			// NOTE: values reversed because higher priority is more valuable, 
-			// and negative values make a go before b, and vice versa
-			// thus, inverting the order will return which has the LARGER priority as the "earlier"
-			// in the array, instead of the SMALLER priority as outlined in the other code blocks
-			return b.getPriority() - a.getPriority();
-		}
+		} 
+		if (b.getPriority() - a.getPriority() !== 0) return b.getPriority() - a.getPriority();
+		if (a.getAssCycles() - b.getAssCycles() !== 0) return a.getAssCycles() - b.getAssCycles();
+		return a.id - b.id;
 	}
 
 	scheduler.generateSchedule = function() {
@@ -238,10 +234,13 @@ function Scheduler() {
 	scheduler.getNextReadyProgram = function() {
 		// If the readyQueue is empty AND the waitingQueue is empty, 
 		// we have no job to provide.
-		if (readyQueue.length == 0 && waitingQueue.length == 0) return null;
-		if (readyQueue.length == 0) scheduler.generateSchedule();
+		if (readyQueue.length == 0) {
+			if (waitingQueue.length == 0) return null;
 
-		if (readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
+			scheduler.generateSchedule();
+		}
+
+		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getAssCycles()) readyQueueIndex++;
 
 		if (readyQueueIndex >= readyQueue.length) {
 			// If the index of the next program exceeds the readyQueue's length, 
