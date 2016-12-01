@@ -19,8 +19,11 @@ for(var i = 0; i < rq.length;i++) {
 }
 
 
-console.log(sched.getCurReadyProgram().getName());
-i5.runCycles(9);
+for(var i = 0; i < 9; i++) {
+	console.log(sched.getCurReadyProgram().getName());
+	i5.nextCycle();
+
+}
 console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
 console.log(sched.getCurReadyProgram().getName());
@@ -66,7 +69,7 @@ function CPU()  {
 	cpu.nextCycle = function() {
 
 		var curProgram = scheduler.getNextReadyProgram();
-		while(curProgram != null && curProgram.getReqCycles == 0)
+		while(curProgram != null && curProgram.getReqCycles() == 0)
 			curProgram = scheduler.getNextReadyProgram();
 
 		if(curProgram == null) return;
@@ -167,7 +170,11 @@ function Scheduler() {
 	scheduler.getWaitingQueue = function() { return waitingQueue; }
 	scheduler.getTerminatedQueue = function() { return terminatedQueue; }
 	scheduler.hasEmptyReadyQueue = function() { return (readyQueue.length == 0 || readyQueueIndex >= readyQueue.length); }
-	scheduler.getCurReadyProgram = function() { return readyQueue[readyQueueIndex]; }
+	scheduler.getCurReadyProgram = function() { 
+		console.log(readyQueueIndex);
+		return readyQueue[readyQueueIndex]; 
+
+	}
 	scheduler.setCPU = function(next) { cpu = next; }
 	scheduler.setType = function(t) { type = t; }
 
