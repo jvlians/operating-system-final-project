@@ -105,9 +105,52 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 	
 
 	program.getName = function(){return name;}
+
 	program.getState = function(){
 		program.updateState();
 		return state;
+	}
+
+	program.getStringifiedWithContainer = function() {
+		// this function returns a stringified version of the job
+		// it's necessary for the visuals
+
+		var rtn = "<div id="+id+">";											// create the div for this data with its unique ID
+		rtn += "<div id='header'><i>" + name + "</i> [" + id + "]</div><br>";	// create the header (style with 'header' css id)
+		rtn += "<div id='data'>";												// create data section (style with 'data' css id)
+		rtn += program.getStringifiedWithoutContainer();
+		rtn += "</div>";
+		rtn += "</div>";
+
+		return rtn;
+	}
+
+	program.getStringifiedWithoutContainer = function() {
+		var data = program.getDataAsDictionary();
+		var ret = "";
+
+		ret += "<b>Priority</b>: " + data.priority + "<br>";							// add data to data section line-by-line
+		ret += "<b>Required Ram</b>: " + data.reqRam + " bytes<br>";
+		ret += "<b>Required Cycles</b>: " + data.reqCycles + "<br>";
+		// ret += "<b>I/O Burst Cycles</b>: " + data.ioBurstCycles + "<br>";			// we have no 'ioBurstCycles' measurement at the moment - TODO: add that
+		ret += "<b>Assigned Cycles</b>: " + data.assCycles + "<br>";
+		ret += "<b>Needs I/O</b>: " + data.burstable;
+
+		return ret;
+	}
+
+	program.getDataAsDictionary = function() {
+		var dict = {
+			"id"		= id,
+			"name"		= name,
+			"priority"	= priority,
+			"reqRam"	= reqRam,
+			"reqCycles"	= requiredCycles,
+			// "ioBurstcycles" =	ioBurstCycles,
+			"assCycles"	= assignedCycles,
+			"burstable"	= burstable
+		};
+		return dict;
 	}
 
 	program.setRam = function(next) {reqRam = next};
@@ -203,8 +246,11 @@ function Scheduler() {
 	var type = 0; // 0 = priority-based, 1 = FIFO, 2 = earliest deadline first
 	var readyQueueIndex = 0;
 	var readyQueueMemoryInUse = 0;
+	var maxAssCycles = -1;
 
 
+	scheduler.getMaxAssCycles = function() { return maxAssCycles; }
+	scheduler.setMaxAssCycles = function() { return setMaxAssCycles; }
 	scheduler.getReadyQueue = function() { return readyQueue; }
 	scheduler.getWaitingQueue = function() { return waitingQueue; }
 	scheduler.getTerminatedQueue = function() { return terminatedQueue; }
@@ -221,58 +267,22 @@ function Scheduler() {
 			// compare ids to determine which job was queued earliest
 			return a.id - b.id;
 		}
-		if (type == 2 && a.getAssCycles() - b.getAssCycles() !== 0) {
+		if (type == 2 && a.getReqCycles() - b.getReqCycles() !== 0) {
 			// compare cycles remaining to determine which job has fewest
-			return a.getAssCycles() - b.getAssCycles();
+			return a.getReqCycles() - b.getReqCycles();
 		} 
 		if (b.getPriority() - a.getPriority() !== 0) return b.getPriority() - a.getPriority();
-		if (a.getAssCycles() - b.getAssCycles() !== 0) return a.getAssCycles() - b.getAssCycles();
+		if (a.getReqCycles() - b.getReqCycles() !== 0) return a.getReqCycles() - b.getReqCycles();
 		return a.id - b.id;
 	}
 
-	scheduler.generateSchedule = function() {
-		// This function gets called ONLY when we need to re-evaluate the ready queue
-		readyQueueIndex = 0;
-		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
-
-		// First, check the readyQueue for completed jobs and remove them as necessary.
-		for (var n = 0; n < readyQueue.length; n++) {
-			if (readyQueue[n].getReqCycles() <= 0) {
-				// if the job at index n has no cycles remaining, move it to the
-				// terminatedQueue and dequeue it
-				readyQueueMemoryInUse -= readyQueue[n].getRam();
-				terminatedQueue.push(readyQueue[n]);
-				readyQueue.splice(n,1);
-				n--;
-			} else {
-				readyQueue[n].setAssCycles(10);
-			}
-		}
-
-		// Then, if the waitingQueue has programs for us to evaluate...
-		if (waitingQueue.length > 0) {
-			var tempQueue = waitingQueue;
-			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
-			for (var i = 0; i < tempQueue.length; i++) {
-				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
-					readyQueueMemoryInUse += tempQueue[i].getRam();
-					tempQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
-					readyQueue.push(tempQueue[i]);									// queue that bad boy up
-					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
-					i--;
-				}
-			}
-		}
-	}
-
 	scheduler.queueNewJob = function(job) {
-		if (job.getRam() > cpu.getMaxRam()) {
-			// TODO: Log "job required ram exceeds max ram available in CPU 
-			// - job cannot queue"
+		if (job.getRam() > cpu.getMaxRam() || job.getRam() < 0) {
+			console.log(job.getName() + " [" + job.id + "] does not have valid RAM - job not queued.");
 			return;
 		}
 		if (job.getReqCycles() <= 0) {
-			// TODO: Log "job completed in 0 cycles"
+			console.log(job.getName() + " [" + job.id + "] completed in 0 cycles");
 			terminatedQueue.push(job);
 			return;
 		}
@@ -303,6 +313,54 @@ function Scheduler() {
 		// if the readyQueue is fine and the readyQueueIndex doesn't exceed the length,
 		// hand the job as normal.
 		return readyQueue[readyQueueIndex];
+	}
+
+	scheduler.generateSchedule = function() {
+		// This function gets called ONLY when we need to re-evaluate the ready queue
+		readyQueueIndex = 0;
+		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
+
+		// First, check the readyQueue for completed jobs and remove them as necessary.
+		for (var n = 0; n < readyQueue.length; n++) {
+			if (readyQueue[n].getReqCycles() <= 0) {
+				// if the job at index n has no cycles remaining, move it to the
+				// terminatedQueue and dequeue it
+				readyQueueMemoryInUse -= readyQueue[n].getRam();
+				terminatedQueue.push(readyQueue[n]);
+				readyQueue.splice(n,1);
+				n--;
+			} else {
+				// if the job at index n still has cycles remaining, we need to assign it
+				// more cycles so it can be processed.
+				if (maxAssCycles > 0) {
+					// if there is an assignment cap, attempt to assign it that many
+					waitingQueue[i].setAssCycles(maxAssCycles);
+				} else {
+					// otherwise, assign the number of cycles known to be remaining
+					waitingQueue[i].setAssCycles(waitingQueue[i].getReqCycles());
+				}
+			}
+		}
+
+		// Then, if the waitingQueue has programs for us to evaluate...
+		if (waitingQueue.length > 0) {
+			waitingQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
+			for (var i = 0; i < waitingQueue.length; i++) {
+				if (waitingQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
+					readyQueueMemoryInUse += waitingQueue[i].getRam();
+					if (maxAssCycles > 0) {
+						// if there is an assignment cap, attempt to assign it that many
+						waitingQueue[i].setAssCycles(maxAssCycles);
+					} else {
+						// otherwise, assign the number of cycles known to be remaining
+						waitingQueue[i].setAssCycles(waitingQueue[i].getReqCycles());
+					}
+					readyQueue.push(waitingQueue[i]);		// queue that bad boy up
+					waitingQueue.splice(i,1);				// remove the job from the waiting queue
+					i--;
+				}
+			}
+		}
 	}
 
 
