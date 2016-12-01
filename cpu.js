@@ -8,23 +8,16 @@ i5.setRam(100);
 
 
 
-for(var i = 1; i < 10; i++) {
+/*for(var i = 1; i < 10; i++) {
 	sched.queueNewJob(new Program("test" + i,10,i,i,false));
-}
+}*/
 
-sched.generateSchedule();
-var rq = sched.getReadyQueue();
-for(var i = 0; i < rq.length;i++) {
-	//console.log(rq[i].getName());
-}
+sched.queueNewJob(new Program("DoubleSortTestLast",1,1,30,true));
 
+sched.queueNewJob(new Program("DoubleSortTestFirst",1,2,30,true));
+sched.queueNewJob(new Program("DoubleSortTestMid",1,2,31,true));
 
-for(var i = 0; i < 9; i++) {
-	console.log(sched.getCurReadyProgram().getName());
-	i5.nextCycle();
-
-}
-
+i5.runCycles(200);
 /*
 console.log(sched.getCurReadyProgram().getName());
 i5.nextCycle();
@@ -75,7 +68,10 @@ function CPU()  {
 		//curProgram = scheduler.getNextReadyProgram();
 
 		if(curProgram == null) return;
-		else curProgram.decCycles();
+		else {
+			console.log(curProgram.getName());
+			curProgram.decCycles();
+		}
 	}	
 
 	cpu.runCycles = function(cycles) {
@@ -136,7 +132,7 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 
 	program.decCycles = function(dec) {
 
-		//program.addBurst();
+		program.addBurst();
 
 		if(requiredCycles <= 0) {
 			assignedCycles = 0;
@@ -149,7 +145,6 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 			if(burstCycles > 0) burstCycles--;
 		} 
 
-		console.log("Required Cycles " + requiredCycles + " assignedCycles "  + assignedCycles);
 	};
 
 	program.addBurst = function() {
@@ -181,7 +176,6 @@ function Scheduler() {
 	scheduler.getTerminatedQueue = function() { return terminatedQueue; }
 	scheduler.hasEmptyReadyQueue = function() { return (readyQueue.length == 0 || readyQueueIndex >= readyQueue.length); }
 	scheduler.getCurReadyProgram = function() { 
-		console.log(readyQueueIndex);
 		return readyQueue[readyQueueIndex]; 
 
 	}
@@ -216,6 +210,8 @@ function Scheduler() {
 				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
+			} else {
+				readyQueue[n].setAssCycles(10);
 			}
 		}
 
@@ -259,9 +255,9 @@ function Scheduler() {
 		}
 
 		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
-		console.log(readyQueueIndex);
 
 		if (readyQueueIndex >= readyQueue.length) {
+			console.log("yes");
 			// If the index of the next program exceeds the readyQueue's length, 
 			// OR if there are 0 jobs in the readyQueue,
 			// we need to regenerate the readyQueue and retry
