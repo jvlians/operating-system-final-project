@@ -41,20 +41,18 @@ function CPU()  {
 
 
 
-	cpu.setScheduler = function(nextScheduler) {
-		scheduler = nextScheduler;
-	};
+	cpu.setScheduler = function(nextScheduler) { scheduler = nextScheduler; }
 
-	cpu.getUsedRam = function() {return curRam;};
-	cpu.getMaxRam = function() {return maxRam};
+	cpu.getUsedRam = function() { return curRam; }
+	cpu.getMaxRam = function() { return maxRam; }
 	cpu.setRam = function(next) {
 		if(scheduler.hasEmptyReadyQueue())
 			maxRam = next;
-	};
+	}
 
-	cpu.getReadyQueue = function() {return readyQueue;};
-	cpu.getNextReadyProgram = function() {return readyQueue[readyIndex].getName();};
-	cpu.setReadyQueue = function(next) {readyQueue = next;};
+	cpu.getReadyQueue = function() {return readyQueue;}
+	cpu.getNextReadyProgram = function() {return readyQueue[readyIndex].getName();}
+	cpu.setReadyQueue = function(next) {readyQueue = next;}
 
 
 
@@ -147,7 +145,7 @@ function Program(name,reqRam,priority,initCycles,burstable) {
 
 function Scheduler() {
 	var scheduler = {};
-
+	var cpu = {};
 	var waitingQueue = [];
 	var readyQueue = [];
 	var terminatedQueue = [];
@@ -157,14 +155,13 @@ function Scheduler() {
 	var readyQueueMemoryInUse = 0;
 
 
-	scheduler.getReadyQueue = function() {return readyQueue;};
-	scheduler.getWaitingQueue = function() {return waitingQueue;};
-	scheduler.getTerminatedQueue = function() {return terminatedQueue;};
-
-
-	scheduler.setType = function(t) {
-		type = t;
-	}
+	scheduler.getReadyQueue = function() { return readyQueue; }
+	scheduler.getWaitingQueue = function() { return waitingQueue; }
+	scheduler.getTerminatedQueue = function() { return terminatedQueue; }
+	scheduler.hasEmptyReadyQueue = function() { return (readyQueue.length == 0 || readyQueueIndex >= readyQueue.length); }
+	scheduler.getCurReadyProgram = function() { return readyQueue[readyQueueIndex]; }
+	scheduler.setCPU = function(next) { cpu = next; }
+	scheduler.setType = function(t) { type = t; }
 
 	scheduler.sortQueue = function(a,b) {
 		if (type == 1) {
@@ -191,7 +188,7 @@ function Scheduler() {
 
 		// First, check the readyQueue for completed jobs and remove them as necessary.
 		for (var n = 0; n < readyQueue.length; n++) {
-			if (readyQueue[n].getReqCycles <= 0) {
+			if (readyQueue[n].getReqCycles() <= 0) {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
@@ -229,20 +226,13 @@ function Scheduler() {
 		waitingQueue.push(job);
 	}
 
-	scheduler.hasEmptyReadyQueue = function() {
-		return (readyQueue.length == 0 || readyQueueIndex >= readyQueue.length);
-	}
-
-	scheduler.getCurReadyProgram = function() {
-		return readyQueue[readyQueueIndex];
-	}
 	scheduler.getNextReadyProgram = function() {
 		// If the readyQueue is empty AND the waitingQueue is empty, 
 		// we have no job to provide.
 		if (readyQueue.length == 0 && waitingQueue.length == 0) return null;
 
 
-		if(readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
+		if (readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
 
 		if (readyQueueIndex >= readyQueue.length) {
 			// If the index of the next program exceeds the readyQueue's length, 
