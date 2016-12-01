@@ -251,7 +251,7 @@ function Scheduler() {
 			scheduler.generateSchedule();
 		}
 
-		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getAssCycles()) readyQueueIndex++;
+		while (readyQueueIndex < readyQueue.length && readyQueue[readyQueueIndex].getAssCycles() <= 0) readyQueueIndex++;
 
 		if (readyQueueIndex >= readyQueue.length) {
 			// If the index of the next program exceeds the readyQueue's length, 
