@@ -47,6 +47,7 @@
 }
 
 #readyQueue > div {
+	font-size:11px;
 	background-color:#eee;
 	display:block;
 	border: 1px black solid;
@@ -55,6 +56,7 @@
 }
 
 #waitingQueue > div {
+	font-size:11px;
 	background-color:#eee;
 	display:block;
 	border: 1px black solid;
@@ -63,6 +65,7 @@
 }
 
 #terminatedQueue > div {
+	font-size:11px;
 	background-color:#eee;
 	display:block;
 	border: 1px black solid;
