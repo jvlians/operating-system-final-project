@@ -7,27 +7,33 @@
 
 	<body>
 			<center>
-				Run Cycles:
-				<button type="button" onclick="i5.runCycles(1)">+1</button>
-				<button type="button" onclick="i5.runCycles(10)">+10</button>
-				<button type="button" onclick="i5.runCycles(25)">+25</button>
-				<button type="button" onclick="i5.runCycles(100)">+100</button>
+				<div id="presetButtonsContainer">
+					Run Cycles:
+					<button type="button" onclick="i5.runCycles(1)">+1</button>
+					<button type="button" onclick="i5.runCycles(10)">+10</button>
+					<button type="button" onclick="i5.runCycles(25)">+25</button>
+					<button type="button" onclick="i5.runCycles(100)">+100</button>
 
-				<br>
+					<br>
 
-				Run Program:
-				<button type="button" onclick="sched.queueNewJob(new Program('Chrome',200,5,350,50))">Chrome</button>
-				<button type="button" onclick="sched.queueNewJob(new Program('NotePad',30,3,50,5))">NotePad</button>
-				<button type="button" onclick="sched.queueNewJob(new Program('Calculator',15,2,50,20))">Calculator</button>
-				<button type="button" onclick="sched.queueNewJob(new Program('Trojan.exe',256,10,200,-1))">Trojan.exe</button>
-				<button type="button" onclick="sched.queueNewJob(new Program('Spotify',100,4,150,10))">Spotify</button>
-				<button type="button" onclick="sched.queueNewJob(new Program('Bitcoins',30,1,2000,-1))">Bitcoins</button>
-				<button type="button" onclick="sched.queueNewJob(new Program('Ping',1,1,1,-1))">Ping</button>
+					Run Program:
+					<button type="button" onclick="sched.queueNewJob(new Program('Chrome',200,5,350,50))">Chrome</button>
+					<button type="button" onclick="sched.queueNewJob(new Program('NotePad',30,3,50,5))">NotePad</button>
+					<button type="button" onclick="sched.queueNewJob(new Program('Calculator',15,2,50,20))">Calculator</button>
+					<button type="button" onclick="sched.queueNewJob(new Program('Trojan.exe',256,10,200,-1))">Trojan.exe</button>
+					<button type="button" onclick="sched.queueNewJob(new Program('Spotify',100,4,150,10))">Spotify</button>
+					<button type="button" onclick="sched.queueNewJob(new Program('Bitcoins',30,1,2000,-1))">Bitcoins</button>
+					<button type="button" onclick="sched.queueNewJob(new Program('Ping',1,1,1,-1))">Ping</button>
 
 
-				<br>
-				Reset Program
-				<button type="button" onclick="globalReset()">RESET</button>
+					<br>
+					Reset Program
+					<button type="button" onclick="globalReset()">RESET</button>
+				</div>
+				<div id="customCommandsContainer">
+					Run Custom Cycle Amount: <input type="number" id="customCycles"/>
+					<button type="button" onclick="i5.runCustomCycles()">GO</button>
+				</div>
 
 				<br>
 

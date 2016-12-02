@@ -82,6 +82,16 @@ function CPU()  {
 		cpu.incTotalCycles();
 	}	
 
+	cpu.runCustomCycles = function() {
+		var customCycles = document.getElementById("customCycles").value;
+	    var n = ~~Number(customCycles);
+	    if (String(n) === customCycles && n > 0) {
+			cpu.runCycles(customCycles);
+	    } else {
+	    	log("Invalid input; custom number of cycles must be a positive integer with no leading zeroes.");
+	    }
+	}
+
 	cpu.runCycles = function(cycles) {
 		for(var i = 0; i < cycles; i++) {
 			cpu.nextCycle();

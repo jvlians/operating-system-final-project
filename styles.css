@@ -1,3 +1,12 @@
+#presetButtonsContainer {
+	border: 1px solid black;
+	width: 550px;
+}
+
+#customCommandsContainer {
+	border: 1px solid black;
+	width: 200px;
+}
 
 .ClockContainer {
 	margin-top: 0px;
