@@ -46,6 +46,7 @@
 .log div{
 	margin:5px;
 }
+
 #readyQueue {
 
 }
@@ -57,8 +58,8 @@
 	border: 1px black solid;
 	overflow: scroll;
 	max-width: 275;
-
-	margin:10px;
+	margin:5px;
+	padding:5px;
 }
 
 #waitingQueue > div {
@@ -68,8 +69,8 @@
 	border: 1px black solid;
 	overflow: scroll;
 	max-width: 275;
-
-	margin:10px;
+	margin: 5px;
+	padding:5px;
 }
 
 #terminatedQueue > div {
@@ -79,6 +80,6 @@
 	border: 1px black solid;
 	overflow: scroll;
 	max-width: 275;
-
-	margin:10px;
+	margin:5px;
+	padding:5px;
 }

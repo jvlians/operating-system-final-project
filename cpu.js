@@ -145,12 +145,14 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		var ret = "";
 
 		ret += "<b>Priority</b>: " + data.priority + "<br>";							// add data to data section line-by-line
-		ret += "<b>Required Ram</b>: " + data.reqRam + " bytes<br>";
+		ret += "<b>State:</b> " + stateToStr[data.state] + "<br>";
+		ret += "<b>Required Ram</b>: " + data.reqRam + " kb<br>";
+		ret += "<b>Initial Cycles</b>: " + data.initCycles + "<br>";
 		ret += "<b>Required Cycles</b>: " + data.reqCycles + "<br>";
-		// ret += "<b>I/O Burst Cycles</b>: " + data.ioBurstCycles + "<br>";			// we have no 'ioBurstCycles' measurement at the moment - TODO: add that
+		ret += "<b>I/O Burst Cycles</b>: " + data.burstCycles + "<br>";
 		ret += "<b>Assigned Cycles</b>: " + data.assCycles + "<br>";
-		ret += "<b>Needs I/O</b>: " + data.burstable + "<br>";
-		ret += "<b>State:</b> " + stateToStr[data.state];
+		ret += "<b>Cycles Until Burst</b>: " + data.cyclesUntilBurst + "<br>";
+		ret += "<b>Random I/O Allowed</b>: " + data.burstable;
 
 		ret.toDOM();
 		return ret;
@@ -158,15 +160,17 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	program.getDataAsDictionary = function() {
 		var dict = {
-			"id"		: id,
-			"name"		: name,
-			"priority"	: priority,
-			"reqRam"	: reqRam,
-			"reqCycles"	: requiredCycles,
-			// "ioBurstcycles" :	ioBurstCycles,
-			"assCycles"	: assignedCycles,
-			"burstable"	: burstable,
-			"state"		: state
+			"id"				: id,
+			"name"				: name,
+			"priority"			: priority,
+			"state"				: state,
+			"reqRam"			: reqRam,
+			"initCycles"		: initCycles,
+			"reqCycles"			: requiredCycles,
+			"burstCycles"		: burstCycles,
+			"assCycles"			: assignedCycles,
+			"cyclesUntilBurst"	: cyclesUntilBurst,
+			"burstable"			: burstable
 		};
 		return dict;
 	}
