@@ -211,6 +211,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 	};
 
 	program.getPriority = function() {return priority;}
+	program.setPriority = function(p) {priority = p;}
 
 
 	program.updateState = function() {
@@ -318,45 +319,6 @@ function Scheduler() {
 		if (a.getReqCycles() - b.getReqCycles() !== 0) return a.getReqCycles() - b.getReqCycles();
 		return a.id - b.id;
 	}
-	scheduler.generateSchedule = function() {
-		// This function gets called ONLY when we need to re-evaluate the ready queue
-		readyQueueIndex = 0;
-		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
-
-		// First, check the readyQueue for completed jobs and remove them as necessary.
-		for (var n = 0; n < readyQueue.length; n++) {
-			if (readyQueue[n].getReqCycles() <= 0) {
-				// if the job at index n has no cycles remaining, move it to the
-				// terminatedQueue and dequeue it
-				readyQueueMemoryInUse -= readyQueue[n].getRam();
-				log(progNameId(readyQueue[n]) + "Removing program from ready queue");
-				log(progNameId(readyQueue[n]) + "Adding program to terminated queue");
-				terminatedQueue.push(readyQueue[n]);
-				readyQueue.splice(n,1);
-				n--;
-			} else {
-				readyQueue[n].setAssCycles(10);
-				log(progNameId(readyQueue[n]) + "Set assigned cycles to 10");
-			}
-		}
-
-		// Then, if the waitingQueue has programs for us to evaluate...
-		if (waitingQueue.length > 0) {
-			waitingQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
-			for (var i = 0; i < waitingQueue.length; i++) {
-				if (waitingQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
-					readyQueueMemoryInUse += waitingQueue[i].getRam();
-					waitingQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
-					console.log(progNameId(readyQueue[n]) + "Removing program from ready queue");
-					console.log(progNameId(readyQueue[n]) + "Added program to ready queue");
-					console.log(progNameId(readyQueue[n]) + "Set assigned cycles to 10");
-					readyQueue.push(tempQueue[i]);									// queue that bad boy up
-					waitingQueue.splice(i,1);		// remove the job from the waiting queue
-					i--;
-				}
-			}
-		}
-	}
 
 	scheduler.queueNewJob = function(job) {
 		if (job.getRam() > cpu.getMaxRam() || job.getRam() < 0) {
@@ -449,6 +411,11 @@ function Scheduler() {
 					waitingQueue.splice(i,1);				// remove the job from the waiting queue
 					i--;
 				}
+			}
+			
+			for (var i = 0; i < waitingQueue.length; i++) {
+				waitingQueue[i].setPriority(waitingQueue[i].getPriority()+1);
+				log("fuck ur butt");
 			}
 		}
 
