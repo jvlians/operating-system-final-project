@@ -442,6 +442,19 @@ function Scheduler() {
 	return scheduler;
 }
 
+function globalReset() {
+	i5 = new CPU();
+	sched = new Scheduler();
+	progId = 0;
+
+
+	sched.setCPU(i5);
+	i5.setScheduler(sched);
+	i5.setRam(256);
+
+	resetVisuals();
+}
+
 String.prototype.toDOM = function() {
 	var d = document,
 		i,

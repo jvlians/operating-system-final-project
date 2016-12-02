@@ -35,6 +35,17 @@ function updateVisuals() {
 	}
 }
 
+function resetVisuals() {
+
+	var tVis	= document.getElementById("terminatedQueue");
+	tVis.innerHTML = "";
+	var rVis	= document.getElementById("readyQueue");
+	rVis.innerHTML = "";
+	var wVis	= document.getElementById("waitingQueue");
+	wVis.innerHTML = "";
+	updateTotalClock();
+}
+
 function addContents(selector, text) {
 	document.querySelector(selector).appendChild(text);
 }
