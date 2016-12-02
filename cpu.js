@@ -14,10 +14,10 @@ i5.setRam(256);
 	sched.queueNewJob(new Program("test" + i,10,i,i,false));
 }*/
 
-sched.queueNewJob(new Program("DoubleSortTestLast",1,1,30,-1));
+//sched.queueNewJob(new Program("DoubleSortTestLast",1,1,30,-1));
 
-sched.queueNewJob(new Program("DoubleSortTestFirst",1,2,30,-1));
-sched.queueNewJob(new Program("DoubleSortTestMid",1,2,31,-1));
+//sched.queueNewJob(new Program("DoubleSortTestFirst",1,2,30,-1));
+//sched.queueNewJob(new Program("DoubleSortTestMid",1,2,31,-1));
 
 //i5.runCycles(200);
 /*
@@ -179,6 +179,8 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		} else {
 			assignedCycles = next;
 		}
+
+		console.log(progNameId(this) + "Set assigned cycles to " + assignedCycles);
 	};
 
 	program.getPriority = function() {return priority;}
@@ -376,6 +378,8 @@ function Scheduler() {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
+				console.log(progNameId(this) + "Removing program from ready queue");
+				console.log(progNameId(this) + "Adding program to terminated queue");
 				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
@@ -405,6 +409,8 @@ function Scheduler() {
 						// otherwise, assign the number of cycles known to be remaining
 						waitingQueue[i].setAssCycles(waitingQueue[i].getReqCycles());
 					}
+					console.log(progNameId(waitingQueue[i]) + "Removing program from waiting queue");
+					console.log(progNameId(waitingQueue[i]) + "Adding program to waiting queue");
 					readyQueue.push(waitingQueue[i]);		// queue that bad boy up
 					waitingQueue.splice(i,1);				// remove the job from the waiting queue
 					i--;
