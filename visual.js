@@ -69,6 +69,8 @@ function log(text){
 		log.scrollTop = log.scrollHeight;
 	}
 
+	console.log(text);
+
 }
 
 function updateTotalClock(){
