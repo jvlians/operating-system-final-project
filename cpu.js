@@ -118,6 +118,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	var burstable = true;
 	var id = progId++;			// the unique ID of this job
+	var initPriority = priority;
 	//var reqRam = 0;				// how much space the job requires in RAM
 	//var priority = 0;			// the priority of this job as compared to other jobs
 	//var initCycles = 0;			// how many cycles we expect the program to run for
@@ -154,6 +155,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		var ret = "";
 
 		ret += "<b>Priority</b>: " + data.priority + "<br>";							// add data to data section line-by-line
+		ret += "<b>Initial Priority</b>: " + data.initPriority + "<br>";				// add data to data section line-by-line
 		ret += "<b>State:</b> " + stateToStr[data.state] + "<br>";
 		ret += "<b>Required Ram</b>: " + data.reqRam + " kb<br>";
 		ret += "<b>Initial Cycles</b>: " + data.initCycles + "<br>";
@@ -172,6 +174,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 			"id"				: id,
 			"name"				: name,
 			"priority"			: priority,
+			"initPriority"		: initPriority,
 			"state"				: state,
 			"reqRam"			: reqRam,
 			"initCycles"		: initCycles,
@@ -212,6 +215,8 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	program.getPriority = function() {return priority;}
 	program.setPriority = function(p) {priority = p;}
+
+	program.getInitPriority = function() {return initPriority;}
 
 
 	program.updateState = function() {
@@ -412,7 +417,7 @@ function Scheduler() {
 					i--;
 				}
 			}
-			
+
 			for (var i = 0; i < waitingQueue.length; i++) {
 				waitingQueue[i].setPriority(waitingQueue[i].getPriority()+1);
 				log("fuck ur butt");
