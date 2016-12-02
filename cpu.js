@@ -48,6 +48,9 @@ function CPU()  {
 	var readyIndex = 0;
 	var jobIndex = 0;
 	var waitingIndex = 0;
+	var totalCycles = 0;
+
+
 
 	cpu.setScheduler = function(nextScheduler) { scheduler = nextScheduler; }
 
@@ -63,6 +66,8 @@ function CPU()  {
 	cpu.setReadyQueue = function(next) {readyQueue = next;}
 
 
+	cpu.getTotalCycles = function() {return totalCycles};
+	cpu.incTotalCycles = function() {totalCycles++};
 
 
 	cpu.nextCycle = function() {
@@ -73,6 +78,9 @@ function CPU()  {
 
 		if(curProgram == null) console.log("Calculated nothing");
 		else curProgram.decCycles();
+
+		cpu.incTotalCycles();
+		updateTotalClock();
 	}	
 
 	cpu.runCycles = function(cycles) {
@@ -209,8 +217,9 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 				assignedCycles--;
 			}
 
-			console.log(progNameId(this) + "Calculated Burst Cycle for program ");
+			console.log(progNameId(this) + "Calculated burst Cycle");
 			// log burst cycle complete
+
 		}
 
 		if(state == 2) {

@@ -1,4 +1,16 @@
 
+.ClockContainer {
+	margin-top: 30px;
+	margin-bottom:30px;
+	width: 200px;
+	border: 1px solid black;
+}
+
+.ClockOutput {
+
+	display: inline;
+}
+
 .programList{
 	display: block;
 	white-space: nowrap;

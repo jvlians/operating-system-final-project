@@ -46,3 +46,7 @@ function updateContents(selector, text) {
 function removeElement(selector) {
 	document.querySelector(selector).remove();
 }
+
+function updateTotalClock(){
+	document.getElementById('ClockOutput').innerHTML = i5.getTotalCycles();
+}
