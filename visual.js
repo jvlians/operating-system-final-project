@@ -46,6 +46,7 @@ function resetVisuals() {
 	var wVis	= document.getElementById("waitingQueue");
 	wVis.innerHTML = "";
 	updateTotalClock();
+	updateRam();
 }
 
 function addContents(selector, text) {
