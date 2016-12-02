@@ -40,11 +40,13 @@
 	height:300px;
 	overflow:scroll;
 
+	background-color:#111;
 	border:1px solid black;
 }
 
 .log div{
 	margin:5px;
+	color:#20C30F;
 }
 
 #readyQueue {

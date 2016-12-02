@@ -71,7 +71,7 @@ function log(text) {
 	var isScrolledToBottom = log.scrollHeight - log.clientHeight <= log.scrollTop + 1;
 
 	var div = document.createElement('div');
-	div.innerHTML = text;
+	div.innerHTML = "> " + text;
 	log.appendChild(div);
 
 	if(isScrolledToBottom) {
