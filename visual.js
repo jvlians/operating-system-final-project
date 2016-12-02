@@ -1,7 +1,7 @@
 function updateVisuals() {
 	var rQueue	= sched.getReadyQueue();
 	var rVis	= document.getElementById("readyQueue");
-	for (var i = 0; i < rQueue.length(); i++) {
+	for (var i = 0; i < rQueue.length; i++) {
 		removeContents("#waitingQueue #"+id);
 		if (rVis.text().indexOf(rQueue[i].id) > -1) {
 			setContents("#readyQueue #"+i+" #data",rQueue[i].getStringifiedWithoutContainer());

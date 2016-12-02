@@ -255,7 +255,7 @@ function Scheduler() {
 	var type = 0; // 0 = priority-based, 1 = FIFO, 2 = earliest deadline first
 	var readyQueueIndex = 0;
 	var readyQueueMemoryInUse = 0;
-	var maxAssCycles = -1;
+	var maxAssCycles = 10;
 
 
 	scheduler.getMaxAssCycles = function() { return maxAssCycles; }
@@ -295,6 +295,8 @@ function Scheduler() {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
+				console.log(progNameId(readyQueue[n]) + "Removing program from ready queue");
+				console.log(progNameId(readyQueue[n]) + "Adding program to terminated queue");
 				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
@@ -312,6 +314,9 @@ function Scheduler() {
 				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
 					readyQueueMemoryInUse += tempQueue[i].getRam();
 					tempQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
+					console.log(progNameId(readyQueue[n]) + "Removing program from ready queue");
+					console.log(progNameId(readyQueue[n]) + "Added program to ready queue");
+					console.log(progNameId(readyQueue[n]) + "Set assigned cycles to 10");
 					readyQueue.push(tempQueue[i]);									// queue that bad boy up
 					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
 					i--;
@@ -379,10 +384,10 @@ function Scheduler() {
 				// more cycles so it can be processed.
 				if (maxAssCycles > 0) {
 					// if there is an assignment cap, attempt to assign it that many
-					waitingQueue[i].setAssCycles(maxAssCycles);
+					readyQueue[n].setAssCycles(maxAssCycles);
 				} else {
 					// otherwise, assign the number of cycles known to be remaining
-					waitingQueue[i].setAssCycles(waitingQueue[i].getReqCycles());
+					readyQueue[n].setAssCycles(readyQueue[n].getReqCycles());
 				}
 			}
 		}
@@ -407,7 +412,7 @@ function Scheduler() {
 			}
 		}
 
-		// updateVisuals();			// ATTEMPT TO UPDATE VISUALS
+		//updateVisuals();			// ATTEMPT TO UPDATE VISUALS
 	}
 
 
