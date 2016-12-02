@@ -16,6 +16,7 @@
 	white-space: nowrap;
 	overflow:scroll;
 }
+
 .programItem {
 
 	width: 170px;
@@ -24,11 +25,11 @@
 	display: inline-block;
 }
 
-
 .dataList {
 	list-style-type:none;
     padding-left:0;
 }
+
 .data {
     padding-left: 7px;
 }
@@ -40,4 +41,31 @@
 	overflow:scroll;
 
 	border:1px solid black;
+}
+
+#readyQueue {
+}
+
+#readyQueue > div {
+	background-color:#eee;
+	display:block;
+	border: 1px black solid;
+	overflow: scroll;
+	max-width: 275;
+}
+
+#waitingQueue > div {
+	background-color:#eee;
+	display:block;
+	border: 1px black solid;
+	overflow: scroll;
+	max-width: 275;
+}
+
+#terminatedQueue > div {
+	background-color:#eee;
+	display:block;
+	border: 1px black solid;
+	overflow: scroll;
+	max-width: 275;
 }
