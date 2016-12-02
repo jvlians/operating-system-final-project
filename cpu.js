@@ -80,7 +80,6 @@ function CPU()  {
 		else curProgram.decCycles();
 
 		cpu.incTotalCycles();
-		updateTotalClock();
 	}	
 
 	cpu.runCycles = function(cycles) {
@@ -88,6 +87,7 @@ function CPU()  {
 			cpu.nextCycle();
 		}
 		
+		updateTotalClock();
 		updateVisuals();
 	}
 
@@ -151,7 +151,6 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		ret += "<b>Assigned Cycles</b>: " + data.assCycles + "<br>";
 		ret += "<b>Needs I/O</b>: " + data.burstable + "<br>";
 		ret += "<b>State:</b> " + stateToStr[data.state];
-		log(data.state + " " +stateToStr[data.state])
 
 		ret.toDOM();
 		return ret;
@@ -441,7 +440,6 @@ function Scheduler() {
 
 		log("-- Schedule Generated --");
 		log(" ");
-		updateVisuals();			// ATTEMPT TO UPDATE VISUALS
 	}
 
 
