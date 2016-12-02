@@ -71,7 +71,7 @@ function CPU()  {
 		//while(curProgram != null && curProgram.getReqCycles() == 0)
 		//curProgram = scheduler.getNextReadyProgram();
 
-		if(curProgram == null) return;
+		if(curProgram == null) console.log("Calculated nothing");
 		else curProgram.decCycles();
 	}	
 
@@ -221,6 +221,8 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 			console.log(progNameId(this) + "Calculated normal cycle");
 		} 
 
+
+		//console.log(requiredCycles);
 		program.updateState();
 
 	};
@@ -228,6 +230,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 	program.addBurst = function() {
 		if(state != 1){
 			if(cyclesUntilBurst == 0) {
+				cyclesUntilBurst = -1;
 				burstCycles = Math.floor(Math.random() * (26)) + 25;
 				console.log(progNameId(this) + "Added " + burstCycles + " planned IO cycles");
 			}
@@ -368,6 +371,8 @@ function Scheduler() {
 	}
 
 	scheduler.generateSchedule = function() {
+		console.log(" ");
+		console.log("-- Generating Schedule --");
 		// This function gets called ONLY when we need to re-evaluate the ready queue
 		readyQueueIndex = 0;
 		// thus, we always need to reset the readyQueueIndex when we're making a new readyQueue.
@@ -378,8 +383,8 @@ function Scheduler() {
 				// if the job at index n has no cycles remaining, move it to the
 				// terminatedQueue and dequeue it
 				readyQueueMemoryInUse -= readyQueue[n].getRam();
-				console.log(progNameId(this) + "Removing program from ready queue");
-				console.log(progNameId(this) + "Adding program to terminated queue");
+				console.log(progNameId(readyQueue[n]) + "Removing program from ready queue");
+				console.log(progNameId(readyQueue[n]) + "Adding program to terminated queue");
 				terminatedQueue.push(readyQueue[n]);
 				readyQueue.splice(n,1);
 				n--;
@@ -410,7 +415,7 @@ function Scheduler() {
 						waitingQueue[i].setAssCycles(waitingQueue[i].getReqCycles());
 					}
 					console.log(progNameId(waitingQueue[i]) + "Removing program from waiting queue");
-					console.log(progNameId(waitingQueue[i]) + "Adding program to waiting queue");
+					console.log(progNameId(waitingQueue[i]) + "Adding program to ready queue");
 					readyQueue.push(waitingQueue[i]);		// queue that bad boy up
 					waitingQueue.splice(i,1);				// remove the job from the waiting queue
 					i--;
@@ -419,6 +424,9 @@ function Scheduler() {
 		}
 
 		//updateVisuals();			// ATTEMPT TO UPDATE VISUALS
+
+		console.log("-- Schedule Generated --");
+		console.log(" ");
 	}
 
 
