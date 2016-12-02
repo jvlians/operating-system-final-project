@@ -35,7 +35,7 @@
 }
 
 .log {
-	margin-left:450px;
+	margin-left:462px;
 	width:500px;
 	height:300px;
 	overflow:scroll;
@@ -43,7 +43,12 @@
 	border:1px solid black;
 }
 
+.log div{
+	margin:5px;
+}
+
 #readyQueue {
+
 }
 
 #readyQueue > div {
