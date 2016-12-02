@@ -54,6 +54,23 @@ function removeElement(selector) {
 	document.querySelector(selector).remove();
 }
 
+
+
+function log(text){
+
+	var log = document.getElementById('log');
+	var isScrolledToBottom = log.scrollHeight - log.clientHeight <= log.scrollTop + 1;
+
+	var div = document.createElement('div');
+	div.innerHTML = text;
+	log.appendChild(div);
+
+	if(isScrolledToBottom) {
+		log.scrollTop = log.scrollHeight;
+	}
+
+}
+
 function updateTotalClock(){
 	document.getElementById('ClockOutput').innerHTML = i5.getTotalCycles();
 }
