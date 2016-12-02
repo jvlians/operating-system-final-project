@@ -22,6 +22,14 @@
 	border: 1px solid black;
 }
 
+#logResetButton {
+	display:inline-block;
+}
+
+#logHeader {
+	display:inline-block;
+}
+
 #maxRam {
 	display:inline;
 }
