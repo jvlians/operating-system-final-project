@@ -115,21 +115,21 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		return state;
 	}
 
-	program.getStringifiedWithContainer = function() {
+	program.getElementWithContainer = function() {
 		// this function returns a stringified version of the job
 		// it's necessary for the visuals
 
-		var rtn = "<div id="+id+">";											// create the div for this data with its unique ID
+		var rtn = "<div id='j"+id+"'>";											// create the div for this data with its unique ID
 		rtn += "<div id='header'><i>" + name + "</i> [" + id + "]</div><br>";	// create the header (style with 'header' css id)
 		rtn += "<div id='data'>";												// create data section (style with 'data' css id)
-		rtn += program.getStringifiedWithoutContainer();
+		rtn += program.getElementWithoutContainer();
 		rtn += "</div>";
 		rtn += "</div>";
 
-		return rtn;
+		return rtn.toDOM();
 	}
 
-	program.getStringifiedWithoutContainer = function() {
+	program.getElementWithoutContainer = function() {
 		var data = program.getDataAsDictionary();
 		var ret = "";
 
@@ -140,6 +140,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		ret += "<b>Assigned Cycles</b>: " + data.assCycles + "<br>";
 		ret += "<b>Needs I/O</b>: " + data.burstable;
 
+		ret.toDOM();
 		return ret;
 	}
 
@@ -423,12 +424,21 @@ function Scheduler() {
 			}
 		}
 
-		//updateVisuals();			// ATTEMPT TO UPDATE VISUALS
-
 		console.log("-- Schedule Generated --");
 		console.log(" ");
+		updateVisuals();			// ATTEMPT TO UPDATE VISUALS
 	}
 
 
 	return scheduler;
 }
+
+String.prototype.toDOM = function() {
+	var d = document,
+		i,
+		a = d.createElement("div"),
+		b = d.createDocumentFragment();
+	a.innerHTML = this;
+	while (i = a.firstChild) b.appendChild(i);
+	return b;
+};
