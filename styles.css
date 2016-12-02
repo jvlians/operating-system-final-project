@@ -46,7 +46,6 @@
 .log div{
 	margin:5px;
 }
-
 #readyQueue {
 
 }
@@ -54,26 +53,32 @@
 #readyQueue > div {
 	font-size:11px;
 	background-color:#eee;
-	display:block;
+	display:inline-block;
 	border: 1px black solid;
 	overflow: scroll;
 	max-width: 275;
+
+	margin:10px;
 }
 
 #waitingQueue > div {
 	font-size:11px;
 	background-color:#eee;
-	display:block;
+	display:inline-block;
 	border: 1px black solid;
 	overflow: scroll;
 	max-width: 275;
+
+	margin:10px;
 }
 
 #terminatedQueue > div {
 	font-size:11px;
 	background-color:#eee;
-	display:block;
+	display:inline-block;
 	border: 1px black solid;
 	overflow: scroll;
 	max-width: 275;
+
+	margin:10px;
 }

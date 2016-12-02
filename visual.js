@@ -67,7 +67,6 @@ function removeElement(selector) {
 
 
 function log(text){
-
 	var log = document.getElementById('log');
 	var isScrolledToBottom = log.scrollHeight - log.clientHeight <= log.scrollTop + 1;
 
@@ -80,7 +79,6 @@ function log(text){
 	}
 
 	console.log(text);
-
 }
 
 function updateTotalClock(){
