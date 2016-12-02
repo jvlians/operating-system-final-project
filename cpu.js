@@ -87,6 +87,8 @@ function CPU()  {
 		for(var i = 0; i < cycles; i++) {
 			cpu.nextCycle();
 		}
+		
+		updateVisuals();
 	}
 
 
@@ -102,6 +104,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	// 0 = Yeild , 1 = IO Burst, 2 = Calculating
 	var state = 0;
+	var stateToStr = {0:"Yield",1:"I/O Burst",2:"Calculating"};
 
 
 	var burstable = true;
@@ -146,7 +149,9 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 		ret += "<b>Required Cycles</b>: " + data.reqCycles + "<br>";
 		// ret += "<b>I/O Burst Cycles</b>: " + data.ioBurstCycles + "<br>";			// we have no 'ioBurstCycles' measurement at the moment - TODO: add that
 		ret += "<b>Assigned Cycles</b>: " + data.assCycles + "<br>";
-		ret += "<b>Needs I/O</b>: " + data.burstable;
+		ret += "<b>Needs I/O</b>: " + data.burstable + "<br>";
+		ret += "<b>State:</b> " + stateToStr[data.state];
+		log(data.state + " " +stateToStr[data.state])
 
 		ret.toDOM();
 		return ret;
@@ -161,7 +166,8 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 			"reqCycles"	: requiredCycles,
 			// "ioBurstcycles" :	ioBurstCycles,
 			"assCycles"	: assignedCycles,
-			"burstable"	: burstable
+			"burstable"	: burstable,
+			"state"		: state
 		};
 		return dict;
 	}
