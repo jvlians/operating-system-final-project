@@ -456,6 +456,7 @@ function globalReset() {
 	i5.setScheduler(sched);
 	i5.setRam(256);
 
+	resetLog();
 	resetVisuals();
 }
 
