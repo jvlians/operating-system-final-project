@@ -323,17 +323,16 @@ function Scheduler() {
 
 		// Then, if the waitingQueue has programs for us to evaluate...
 		if (waitingQueue.length > 0) {
-			var tempQueue = waitingQueue;
-			tempQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
-			for (var i = 0; i < tempQueue.length; i++) {
-				if (tempQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
-					readyQueueMemoryInUse += tempQueue[i].getRam();
-					tempQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
-					log(progNameId(readyQueue[n]) + "Removing program from ready queue");
-					log(progNameId(readyQueue[n]) + "Added program to ready queue");
-					log(progNameId(readyQueue[n]) + "Set assigned cycles to 10");
+			waitingQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
+			for (var i = 0; i < waitingQueue.length; i++) {
+				if (waitingQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
+					readyQueueMemoryInUse += waitingQueue[i].getRam();
+					waitingQueue[i].setAssCycles(10); 								// TODO: SWITCH THIS TO A VARIABLE THAT CAN BE MANUALLY CHANGED
+					console.log(progNameId(readyQueue[n]) + "Removing program from ready queue");
+					console.log(progNameId(readyQueue[n]) + "Added program to ready queue");
+					console.log(progNameId(readyQueue[n]) + "Set assigned cycles to 10");
 					readyQueue.push(tempQueue[i]);									// queue that bad boy up
-					waitingQueue.splice(waitingQueue.indexOf(tempQueue[i]),1);		// remove the job from the waiting queue
+					waitingQueue.splice(i,1);		// remove the job from the waiting queue
 					i--;
 				}
 			}
@@ -352,6 +351,7 @@ function Scheduler() {
 		}
 		waitingQueue.push(job);
 		log(progNameId(job) + " Added program to waiting queue");
+		updateVisuals();
 	}
 
 	scheduler.getNextReadyProgram = function() {
