@@ -87,7 +87,6 @@ function CPU()  {
 			cpu.nextCycle();
 		}
 		
-		updateTotalClock();
 		updateVisuals();
 	}
 
@@ -102,7 +101,7 @@ function Program(name,reqRam,priority,initCycles,cyclesUntilBurst) {
 
 	var program = {};
 
-	// 0 = Yeild , 1 = IO Burst, 2 = Calculating
+	// 0 = Yield , 1 = IO Burst, 2 = Calculating
 	var state = 0;
 	var stateToStr = {0:"Yield",1:"I/O Burst",2:"Calculating"};
 
@@ -282,6 +281,7 @@ function Scheduler() {
 	var maxAssCycles = 10;
 
 
+	scheduler.getReadyQueueMemoryInUse = function () { return readyQueueMemoryInUse; }
 	scheduler.getMaxAssCycles = function() { return maxAssCycles; }
 	scheduler.setMaxAssCycles = function() { return setMaxAssCycles; }
 	scheduler.getReadyQueue = function() { return readyQueue; }
@@ -424,7 +424,7 @@ function Scheduler() {
 		if (waitingQueue.length > 0) {
 			waitingQueue.sort(scheduler.sortQueue);	// sort the array using the custom sortQueue function in scheduler
 			for (var i = 0; i < waitingQueue.length; i++) {
-				if (waitingQueue[i].getRam() < cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
+				if (waitingQueue[i].getRam() <= cpu.getMaxRam() - readyQueueMemoryInUse) {	// if we can fit this process in RAM
 					readyQueueMemoryInUse += waitingQueue[i].getRam();
 					if (maxAssCycles > 0) {
 						// if there is an assignment cap, attempt to assign it that many

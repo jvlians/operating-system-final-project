@@ -1,9 +1,24 @@
 
 .ClockContainer {
-	margin-top: 30px;
+	margin-top: 0px;
 	margin-bottom:30px;
-	width: 200px;
+	width: 250px;
 	border: 1px solid black;
+}
+
+#cpuInfo {
+	margin-top: 30px;
+	margin-bottom:0px;
+	width: 250px;
+	border: 1px solid black;
+}
+
+#maxRam {
+	display:inline;
+}
+
+#usedRam {
+	display:inline;
 }
 
 .ClockOutput {

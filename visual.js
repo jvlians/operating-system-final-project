@@ -1,4 +1,6 @@
 function updateVisuals() {
+	updateTotalClock();
+	updateRam();
 
 	var tQueue	= sched.getTerminatedQueue();
 	var tVis	= document.getElementById("terminatedQueue");
@@ -90,4 +92,9 @@ function resetLog() {
 
 function updateTotalClock(){
 	document.getElementById('ClockOutput').innerHTML = i5.getTotalCycles();
+}
+
+function updateRam() {
+	document.getElementById('maxRam').innerHTML = i5.getMaxRam();
+	document.getElementById('usedRam').innerHTML = sched.getReadyQueueMemoryInUse();
 }
