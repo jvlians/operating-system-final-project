@@ -420,7 +420,6 @@ function Scheduler() {
 
 			for (var i = 0; i < waitingQueue.length; i++) {
 				waitingQueue[i].setPriority(waitingQueue[i].getPriority()+1);
-				log("fuck ur butt");
 			}
 		}
 
